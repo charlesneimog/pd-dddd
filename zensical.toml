@@ -1,0 +1,100 @@
+[project]
+site_name = "pd-dddd"
+site_url = "https://charlesneimog.github.io/pd-dddd"
+site_description = "dddd is a data abstraction framework for Pure Data (Pd) implemented via pdlua."
+copyright = "Copyright &copy; 2026 | Charles K. Neimog"
+repo_url = "https://github.com/charlesneimog/pd-dddd"
+
+nav = [
+  { "Overview" = [
+    "index.md",
+  ] },
+
+]
+
+
+[project.theme]
+name = "material"
+features = [
+  # navigation
+  "navigation.top",
+  "navigation.sections",
+  "navigation.footer",
+  "navigation.instant.prefetch",
+  "navigation.tracking",
+  "navigation.tabs.sticky",
+  "navigation.expand",
+  "navigation.instant",
+  "navigation.instant.progress",
+  "navigation.path",
+
+  # correct
+  "content.code.annotate",
+  "content.code.copy",
+
+  # search
+  "search.highlight",
+  "search.suggest",
+
+  # content
+  "content.tabs.link",
+  "content.footnote.tooltips",
+
+  # Preview
+]
+
+[project.plugins.minify]
+minify_js = true
+minify_html = true
+minify_css = true
+minify_inline_js = true
+minify_inline_css = true
+
+[project.plugins.social]
+
+# Palette toggle for automatic mode
+[[project.theme.palette]]
+media = "(prefers-color-scheme)"
+toggle.icon = "lucide/sun-moon"
+toggle.name = "Switch to light mode"
+
+# Palette toggle for light mode
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+accent = "deep purple"
+primary = "deep purple"
+
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+# Palette toggle for dark mode
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+accent = "deep purple"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to system preference"
+
+
+[project.extra.analytics]
+provider = "google"
+property = "G-E81RWT6R4V"
+
+[project.extra.analytics.feedback]
+title = "Was this page helpful?"
+
+[[project.extra.analytics.feedback.ratings]]
+icon = "material/emoticon-happy-outline"
+name = "This page was helpful"
+data = 1
+note = "Thanks for your feedback!"
+
+[[project.extra.analytics.feedback.ratings]]
+icon = "material/emoticon-sad-outline"
+name = "This page could be improved"
+data = 0
+note = """
+  Thanks for your feedback! Help us improve this page by
+  using our <a href="https://github.com/charlesneimog/OpenScofo/issues/new?labels=documentation" target="_blank" rel="noopener">feedback form</a>.
+"""
