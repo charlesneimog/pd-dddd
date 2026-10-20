@@ -90,26 +90,26 @@ end
 --- Creates a new dddd instance from Pd atoms.
 ---
 --- The atom list is converted into a nested Lua table when possible.
----@param pdobj table Pd object instance owning this dddd.
+---@param self table Pd object instance owning this dddd.
 ---@param atoms table|any Pd atoms or a scalar value.
 ---@return table obj New dddd instance.
-function M:new(pdobj, atoms)
+function M:new(self, atoms)
 	local obj = setmetatable({}, self)
 	obj.atoms = atoms or {}
 	obj.table = self:table_from_atoms(atoms)
-	obj.pdobj = pdobj
+	obj.self = self
 	obj.depth = self:get_depth(obj.table)
 	return obj
 end
 
 -- ─────────────────────────────────────
 --- Creates a new dddd instance from an existing Lua table.
----@param pdobj table Pd object instance owning this dddd.
+---@param self table Pd object instance owning this dddd.
 ---@param t table Source table.
 ---@return table obj New dddd instance.
-function M:new_from_table(pdobj, t)
+function M:new_from_table(self, t)
 	local obj = setmetatable({}, self)
-	obj.pdobj = pdobj
+	obj.self = self
 	obj.table = t
 	obj.depth = self:get_depth(obj.table)
 	return obj
@@ -117,20 +117,20 @@ end
 
 -- ─────────────────────────────────────
 --- Creates a dddd by resolving an id from a Pd atom list.
----@param pdobj table Pd object instance owning this dddd.
+---@param self table Pd object instance owning this dddd.
 ---@param t table Atom list where the first item is the dddd id.
 ---@return table obj Cloned dddd instance referenced by id.
-function M:new_from_atoms(pdobj, t)
+function M:new_from_atoms(self, t)
 	local id = t[1]
-	return M:new_from_id(pdobj, id)
+	return M:new_from_id(self, id)
 end
 
 -- ─────────────────────────────────────
 --- Creates a dddd clone from a previously emitted dddd outlet id.
----@param pdobj table Pd object instance owning this dddd.
+---@param self table Pd object instance owning this dddd.
 ---@param id string Outlet id token (for example: <abc123...>).
 ---@return table obj Cloned dddd instance.
-function M:new_from_id(pdobj, id)
+function M:new_from_id(self, id)
 	local obj = setmetatable({}, self)
 	obj.atoms = {}
 
@@ -151,7 +151,7 @@ function M:new_from_id(pdobj, id)
 	-- init metadata
 	obj.depth = self:get_depth(obj.table)
 	obj._id = M:_random_string()
-	obj.pdobj = pdobj
+	obj.self = self
 
 	return obj
 end
@@ -175,25 +175,25 @@ end
 ---@param typename string Type name to validate.
 function M:assert_type(typename)
 	if typename ~= self.type then
-		self.pdobj:error("[" .. self.pdobj._name .. "] Expected type " .. self.type .. " received type " .. typename)
-		error("[" .. self.pdobj._name .. "] Expected type " .. self.type .. " received type " .. typename)
+		self.self:error("[" .. self.self._name .. "] Expected type " .. self.type .. " received type " .. typename)
+		error("[" .. self.self._name .. "] Expected type " .. self.type .. " received type " .. typename)
 	end
 end
 
 -- ─────────────────────────────────────
 --- Retrieves and clones a dddd from the global outlet table.
----@param pdobj table Pd object instance owning this dddd.
+---@param self table Pd object instance owning this dddd.
 ---@param id string Outlet id token.
 ---@return table cloned Cloned dddd object.
-function M:get_dddd_from_id(pdobj, id)
+function M:get_dddd_from_id(self, id)
 	local original = _G.dddd_outlets[id]
 	if not original then
-		self.pdobj:error("[" .. self.pdobj._name .. "] " .. "dddd with id " .. tostring(id) .. " not found")
+		self.self:error("[" .. self.self._name .. "] " .. "dddd with id " .. tostring(id) .. " not found")
 		error("dddd with id " .. tostring(id) .. " not found")
 	end
 
 	local cloned_table = M._deep_copy_table(original:get_table())
-	local cloned = M:new_from_table(pdobj, cloned_table)
+	local cloned = M:new_from_table(self, cloned_table)
 	return cloned
 end
 
@@ -204,7 +204,7 @@ function M:output(i)
 	local id = M:_random_string()
 	local str = "<" .. id .. ">"
 	_G.dddd_outlets[str] = self
-	pd._outlet(self.pdobj._object, i, "dddd", { str })
+	pd._outlet(self.self._object, i, "dddd", { str })
 	_G.dddd_outlets[str] = nil -- clear memory
 end
 
@@ -347,7 +347,7 @@ function M:check_brackets(str)
 	local thereis_p = str:find("%(") or str:find("%)")
 
 	if thereis_b and thereis_p then
-		self.pdobj:error("[" .. self.pdobj._name .. "] " .. "mixed brackets and parenthesis are not allowed")
+		self.self:error("[" .. self.self._name .. "] " .. "mixed brackets and parenthesis are not allowed")
 		error("mixed brackets and parenthesis are not allowed")
 	elseif not thereis_b and not thereis_p then
 		return "[", "]"
