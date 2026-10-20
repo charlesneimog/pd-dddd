@@ -166,9 +166,9 @@ Creating a `dddd` from a Lua table with `new_from_table` does not copy that orig
 
 The following methods come from the provided `dddd.lua` implementation.
 
-### `dddd:new_from_table(pdobj, table)`
+### `dddd:new_from_table(self, table)`
 
-Wrap a Lua table as a `dddd` instance. `pdobj` is usually `self` inside the Lua object's method.
+Wrap a Lua table as a `dddd` instance. `self` is usually `self` inside the Lua object's method.
 
 ```lua
 local data = dddd:new_from_table(self, {60, 64, 67})
@@ -182,7 +182,7 @@ Send the `dddd` value through a Pd outlet. Outlet numbers start at 1.
 data:output(1)
 ```
 
-### `dddd:new_from_atoms(pdobj, atoms)`
+### `dddd:new_from_atoms(self, atoms)`
 
 Receive a `dddd` message inside an `in_1_dddd` or equivalent method.
 
@@ -240,14 +240,14 @@ These methods exist in the supplied source but are less important for a first ob
 
 | Method | Function | Important note |
 | --- | --- | --- |
-| `dddd:new(pdobj, atoms)` | Creates an instance and converts incoming Pd atoms using `table_from_atoms`. | For common examples, prefer `new_from_table` or `new_from_atoms`. |
-| `dddd:new_from_id(pdobj, id)` | Resolves a temporary message ID and copies its table. | Use only during synchronous message handling while the ID exists. |
+| `dddd:new(self, atoms)` | Creates an instance and converts incoming Pd atoms using `table_from_atoms`. | For common examples, prefer `new_from_table` or `new_from_atoms`. |
+| `dddd:new_from_id(self, id)` | Resolves a temporary message ID and copies its table. | Use only during synchronous message handling while the ID exists. |
 | `data:lisplist_to_table(text)` | Parses one fully enclosed parenthesized or bracketed list. | Returns `nil` if no valid outer list is found. |
 | `data:table_from_atoms(atoms)` | Converts a Pd atom list into a Lua table, inferring bracket style. | The implementation is designed around whitespace-delimited sequential lists. |
 | `data:check_brackets(text)` | Checks whether bracket or parenthesis syntax is used. | Mixed `[]` and `()` styles raise an error. |
 | `data:print()` | Prints the current value to Pd's console. | In the supplied implementation, fresh values made with `new_from_table` might not have a delimiter style set; `to_string` plus `pd.post` is more reliable for this case. |
 | `data:assert_type(name)` | Checks the current instance's type label. | Its error text compares the requested and stored labels; take care when using it as a validation message. |
-| `data:get_dddd_from_id(pdobj, id)` | Older alternative for resolving an ID. | The supplied implementation should be reviewed before relying on it; `new_from_atoms` is the recommended receiving method. |
+| `data:get_dddd_from_id(self, id)` | Older alternative for resolving an ID. | The supplied implementation should be reviewed before relying on it; `new_from_atoms` is the recommended receiving method. |
 
 Methods with leading underscores (`_random_string`, `_parse_list`, `_deep_copy_table`) are implementation helpers, not part of the beginner workflow.
 
