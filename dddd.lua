@@ -95,9 +95,9 @@ end
 ---@return table obj New dddd instance.
 function M:new(pdobj, atoms)
 	local obj = setmetatable({}, self)
-	obj.atoms = atoms or {}
-	obj.table = self:table_from_atoms(atoms)
 	obj.pdobj = pdobj
+	obj.atoms = atoms or {}
+	obj.table = obj:table_from_atoms(atoms)
 	obj.depth = self:get_depth(obj.table)
 	return obj
 end
@@ -111,6 +111,8 @@ function M:new_from_table(pdobj, t)
 	local obj = setmetatable({}, self)
 	obj.pdobj = pdobj
 	obj.table = t
+	obj._s_open = "("
+	obj._s_close = ")"
 	obj.depth = self:get_depth(obj.table)
 	return obj
 end
@@ -142,11 +144,15 @@ function M:new_from_id(pdobj, id)
 	local source_table
 	if type(stored) == "table" and type(stored.get_table) == "function" then
 		source_table = stored:get_table()
+		obj._s_open = stored._s_open
+		obj._s_close = stored._s_close
 	else
 		source_table = stored
 	end
 
 	obj.table = M._deep_copy_table(self, source_table)
+	obj._s_open = obj._s_open or "("
+	obj._s_close = obj._s_close or ")"
 
 	-- init metadata
 	obj.depth = self:get_depth(obj.table)
@@ -296,6 +302,10 @@ function M:print()
 	if type(self.table) ~= "table" then
 		pd.post(self.table)
 		return
+	end
+	if self._s_open == nil or self._s_close == nil then
+		self._s_open = "("
+		self._s_close = ")"
 	end
 
 	local parts = {}
